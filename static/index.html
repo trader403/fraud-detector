@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 信用欺诈检测引擎</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 700px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: #f5f7fb;
+        }
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+        }
+        .btn {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        .btn:hover {
+            background: #1557b0;
+        }
+        .result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .high { background: #fce8e6; color: #c5221f; }
+        .medium { background: #fef7e0; color: #ea8600; }
+        .low { background: #e6f4ea; color: #137333; }
+        table {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        td { padding: 0.4rem 0; }
+        .label { color: #5f6368; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🛡️ AI 信用欺诈检测引擎</h1>
+        <p>输入一段文本（中文或英文），AI 将评估其欺诈风险。</p>
+        <textarea id="inputText" rows="4" placeholder="请输入待检测的文本..."></textarea>
+        <button class="btn" onclick="detect()">检测风险</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function detect() {
+            const text = document.getElementById('inputText').value.trim();
+            if (!text) return alert('请输入文本');
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '正在检测...';
+            
+            try {
+                const resp = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text, lang: 'auto' })
+                });
+                const data = await resp.json();
+                
+                const riskEmoji = data.risk_level === 'high' ? '🔴' : data.risk_level === 'medium' ? '🟡' : '🟢';
+                resultDiv.innerHTML = `
+                    <div class="result ${data.risk_level}">
+                        ${riskEmoji} 风险等级：${data.risk_level.toUpperCase()} （欺诈概率：${(data.fraud_probability * 100).toFixed(1)}%）
+                    </div>
+                    <table>
+                        <tr><td class="label">判定结果：</td><td><strong>${data.is_fraud ? '⚠️ 欺诈' : '✅ 正常'}</strong></td></tr>
+                        <tr><td class="label">置信度：</td><td>${data.fraud_probability.toFixed(4)}</td></tr>
+                        <tr><td class="label">使用阈值：</td><td>${data.threshold}</td></tr>
+                        <tr><td class="label">处理耗时：</td><td>${data.processing_time_ms.toFixed(1)} ms</td></tr>
+                        <tr><td class="label">检测语言：</td><td>${data.lang === 'zh' ? '中文' : '英文'}</td></tr>
+                    </table>
+                `;
+            } catch (err) {
+                resultDiv.innerHTML = '<p style="color:red;">检测失败，请检查 API 服务是否启动。</p>';
+            }
+        }
+    </script>
+</body>
+</html>
