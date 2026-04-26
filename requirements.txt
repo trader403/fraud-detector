@@ -8,4 +8,4 @@ pandas
 numpy
 jieba
 requests
-python-multipart" > requirements.txt
+python-multipart
