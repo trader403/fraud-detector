@@ -1,15 +1,15 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.schema.json",
-  "name": "io.github.商人403/fraud-checker",
+  "name": "io.github.trader403/fraud-checker",
   "description": "支持中英文的AI欺诈文本检测引擎，可识别诈骗、钓鱼等风险，并返回风险评分、判定和等级。",
   "version": "1.0.0",
   "repository": {
-    "url": "https://github.com/商人403/fraud-checker",
+    "url": "https://github.com/trader403/fraud-detector",
     "source": "git"
   },
   "remotes": [
     {
-      "url": "https://你的公网地址/predict",
+      "url": "https://fraud-detector-production-7cf8.up.railway.app/predict",
       "transport": "http"
     }
   ]
