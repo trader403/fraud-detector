@@ -1,4 +1,4 @@
-echo "fastapi
+fastapi
 uvicorn
 joblib
 scikit-learn
