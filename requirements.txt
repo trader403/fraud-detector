@@ -1,0 +1,11 @@
+echo "fastapi
+uvicorn
+joblib
+scikit-learn
+imbalanced-learn
+lightgbm
+pandas
+numpy
+jieba
+requests
+python-multipart" > requirements.txt
